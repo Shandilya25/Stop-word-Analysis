@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Text Extraction and Analysis from URLs — README</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+                   Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color: #111827;
+      line-height: 1.6;
+      margin: 0;
+      background: #f7fafc;
+      padding: 32px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 24px auto;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+      color: #0f172a;
+    }
+    h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+    p {
+      margin: 12px 0;
+      font-size: 15px;
+    }
+    code, pre {
+      background: #f1f5f9;
+      padding: 8px;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      font-size: 13px;
+      display: block;
+      white-space: pre-wrap;
+    }
+    .section {
+      margin-top: 18px;
+    }
+    ul {
+      margin: 8px 0 8px 20px;
+    }
+    .note {
+      background: #fff7ed;
+      border-left: 4px solid #f59e0b;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin: 12px 0;
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    a { color: #0369a1; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Text Extraction and Analysis from URLs</h1>
+
+    <p>
+      This project automates the process of extracting article text from a list of URLs provided in an Excel file (<code>Input.xlsx</code>) and performing in-depth textual analysis on the extracted content. The primary goal is to collect only relevant article content — specifically the article title and main body — while ignoring headers, footers, sidebars, advertisements, and other non-article elements. Each article is saved as a separate text file in a designated folder named <code>extracted_articles</code>, with filenames set to the corresponding <code>URL_ID</code> for easy tracking.
+    </p>
+
+    <div class="section">
+      <h2>What the program does</h2>
+      <p>
+        After reading the input spreadsheet (<code>Input.xlsx</code>) containing <code>URL_ID</code> and <code>URL</code> columns, the script visits each URL and extracts the article title and body text using Python web scraping libraries. The extracted raw text is then preprocessed to remove noise and prepare it for analysis. For each article, the program computes several linguistic, sentiment, and readability metrics including Positive Score, Negative Score, Polarity Score, Subjectivity Score, Average Sentence Length, Percentage of Complex Words, Fog Index, Average Number of Words per Sentence, Complex Word Count, Word Count, Syllables per Word, Personal Pronouns count, and Average Word Length.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Output format</h2>
+      <p>
+        Results are saved in an Excel file (<code>output.xlsx</code>) following the exact column order given in <code>Output Data Structure.xlsx</code>. The output preserves all original columns from <code>Input.xlsx</code> and appends the computed variables for each article, making it ready for submission or further analysis. Each article's raw text file is also saved under <code>extracted_articles/&lt;URL_ID&gt;.txt</code>.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Libraries and tools used</h2>
+      <p>
+        The solution is implemented in Python and uses popular, well-supported libraries for web scraping and NLP tasks. The primary libraries used are:
+      </p>
+      <ul>
+        <li><code>beautifulsoup4</code> and <code>requests</code> for web scraping.</li>
+        <li><code>pandas</code> and <code>openpyxl</code> for reading/writing Excel files and data handling.</li>
+        <li><code>nltk</code> for tokenization, POS tagging, and other text utilities.</li>
+        <li><code>textstat</code> or custom syllable counters for readability and syllable counts.</li>
+      </ul>
+      <p class="note">Note: JavaScript-heavy pages might require Selenium for accurate rendering before extraction. The repository supports usage with <code>BeautifulSoup</code> by default; Selenium is optional for complex sites.</p>
+    </div>
+
+    <div class="section">
+      <h2>How to run</h2>
+      <p>
+        1. Place <code>Input.xlsx</code> in the project root. The file must contain <code>URL_ID</code> and <code>URL</code> columns. <br>
+        2. Create and activate a Python virtual environment (recommended). <br>
+        3. Install dependencies from <code>requirements.txt</code>. <br>
+        4. Run the main script:
+      </p>
+
+      <pre>
+# create & activate virtual environment (example)
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# macOS / Linux
+source venv/bin/activate
+
+# install dependencies
+pip install -r requirements.txt
+
+# run the extraction + analysis pipeline
+python main.py
+      </pre>
+
+      <p>
+        After execution, extracted text files will be saved to <code>extracted_articles/</code>, and the analysis results will be written to <code>output.xlsx</code>.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Project structure</h2>
+      <p>
+        A typical repository layout for this project looks like:
+      </p>
+      <pre>
+project-root/
+├─ main.py                    # orchestrates extraction and analysis
+├─ requirements.txt           # required Python packages
+├─ Input.xlsx                 # input file with URL_ID and URL
+├─ Output Data Structure.xlsx  # reference output format
+├─ output.xlsx                # generated output (result)
+├─ extracted_articles/        # saved article text files: &lt;URL_ID&gt;.txt
+└─ helpers/                   # optional helper modules (parsers, text utils)
+      </pre>
+    </div>
+
+    <div class="section">
+      <h2>Notes and recommendations</h2>
+      <p>
+        - Always run the script with an active and stable internet connection. <br>
+        - For best results, run the scraping in a controlled manner (throttling requests) so as not to overload target servers. <br>
+        - Use Selenium for websites that render content only after JavaScript execution. <br>
+        - Run the pipeline in a virtual environment to avoid dependency conflicts.
+      </p>
+    </div>
+
+    <footer>
+      <p>
+        This project was created to meet the assignment requirements for extracting and analyzing article text from URLs. It demonstrates the combined use of web scraping, natural language processing, and text analytics in Python. If you would like, I can also provide the <code>requirements.txt</code>, sample <code>main.py</code>, or a ready-to-run zip containing the code and helper files.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
